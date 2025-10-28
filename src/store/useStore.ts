@@ -6,6 +6,8 @@ import type {
   WizardFormData,
   GitSyncStatus,
   AIMessage,
+  DataPointRequest,
+  UserRole,
 } from '../types';
 import { mockMachines, mockTemplates } from '../data/mockData';
 
@@ -24,6 +26,10 @@ interface StoreState {
   isAiPanelOpen: boolean;
   currentDeployment: Deployment | null;
 
+  // IT/OT Collaboration
+  currentUserRole: UserRole;
+  dataPointRequests: DataPointRequest[];
+
   // Actions
   addMachine: (machine: Machine) => void;
   updateMachine: (id: string, updates: Partial<Machine>) => void;
@@ -41,6 +47,12 @@ interface StoreState {
 
   setCurrentDeployment: (deployment: Deployment | null) => void;
   updateDeployment: (id: string, updates: Partial<Deployment>) => void;
+
+  // IT/OT Collaboration Actions
+  setUserRole: (role: UserRole) => void;
+  createRequest: (request: DataPointRequest) => void;
+  updateRequest: (id: string, updates: Partial<DataPointRequest>) => void;
+  deleteRequest: (id: string) => void;
 }
 
 const initialWizardData: WizardFormData = {
@@ -68,6 +80,10 @@ export const useStore = create<StoreState>((set) => ({
   aiChatHistory: [],
   isAiPanelOpen: false,
   currentDeployment: null,
+
+  // Initial IT/OT Collaboration state
+  currentUserRole: 'IT', // Default to IT role
+  dataPointRequests: [],
 
   // Machine actions
   addMachine: (machine) =>
@@ -140,5 +156,28 @@ export const useStore = create<StoreState>((set) => ({
       deployments: state.deployments.map((d) =>
         d.id === id ? { ...d, ...updates } : d
       ),
+    })),
+
+  // IT/OT Collaboration actions
+  setUserRole: (role) =>
+    set(() => ({
+      currentUserRole: role,
+    })),
+
+  createRequest: (request) =>
+    set((state) => ({
+      dataPointRequests: [...state.dataPointRequests, request],
+    })),
+
+  updateRequest: (id, updates) =>
+    set((state) => ({
+      dataPointRequests: state.dataPointRequests.map((r) =>
+        r.id === id ? { ...r, ...updates } : r
+      ),
+    })),
+
+  deleteRequest: (id) =>
+    set((state) => ({
+      dataPointRequests: state.dataPointRequests.filter((r) => r.id !== id),
     })),
 }));

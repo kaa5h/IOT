@@ -1,10 +1,10 @@
 import React from 'react';
-import { Search, Bell, Bot, User } from 'lucide-react';
+import { Search, Bell, Bot, User, Users } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { cn } from '../../lib/utils';
 
 export const Topbar: React.FC = () => {
-  const { isAiPanelOpen, toggleAIPanel } = useStore();
+  const { isAiPanelOpen, toggleAIPanel, currentUserRole, setUserRole } = useStore();
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
@@ -35,6 +35,35 @@ export const Topbar: React.FC = () => {
         >
           <Bot className="h-5 w-5" />
         </button>
+
+        {/* Role Switcher */}
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg">
+          <Users className="h-4 w-4 text-gray-600" />
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setUserRole('IT')}
+              className={cn(
+                'px-3 py-1 text-sm font-medium rounded transition-colors',
+                currentUserRole === 'IT'
+                  ? 'bg-primary text-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              )}
+            >
+              IT
+            </button>
+            <button
+              onClick={() => setUserRole('OT')}
+              className={cn(
+                'px-3 py-1 text-sm font-medium rounded transition-colors',
+                currentUserRole === 'OT'
+                  ? 'bg-primary text-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              )}
+            >
+              OT
+            </button>
+          </div>
+        </div>
 
         {/* Notifications */}
         <button
