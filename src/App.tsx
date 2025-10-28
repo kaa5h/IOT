@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Machines } from './pages/Machines';
+import { MachineDetail } from './pages/MachineDetail';
+import { EditMachine } from './pages/EditMachine';
 import { Templates } from './pages/Templates';
 import { Deployments } from './pages/Deployments';
 import { Settings } from './pages/Settings';
@@ -18,6 +20,8 @@ function App() {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="machines" element={<Machines />} />
+          <Route path="machines/:id" element={<MachineDetail />} />
+          <Route path="machines/:id/edit" element={<EditMachine />} />
           <Route path="templates" element={<Templates />} />
           <Route path="deployments" element={<Deployments />} />
           <Route path="settings" element={<Settings />} />
