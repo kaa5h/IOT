@@ -6,7 +6,6 @@ import { Button } from '../../components/ui/Button';
 import { Input, Textarea, Select } from '../../components/ui/Input';
 import type { MachineType, ProtocolType, OTRequest } from '../../types';
 import { generateId } from '../../lib/utils';
-import { NotificationTemplates } from '../../lib/notificationHelpers';
 import { ArrowLeft, Send } from 'lucide-react';
 
 const machineTypes: Array<{ value: MachineType; label: string }> = [
@@ -89,7 +88,7 @@ export const OTRequestPage: React.FC = () => {
     createOTRequest(request);
 
     // Notify IT users
-    const notification = {
+    addNotification({
       id: generateId('notif'),
       type: 'request_created' as const,
       priority: 'high' as const,
@@ -97,13 +96,12 @@ export const OTRequestPage: React.FC = () => {
       message: `OT requests help for ${formData.machineName}`,
       timestamp: new Date().toISOString(),
       read: false,
-      visibleTo: ['IT'] as const,
+      visibleTo: ['IT'],
       requestId: request.id,
       machineName: request.machineName,
       actionUrl: `/collaboration/${request.id}/it-draft`,
       actionLabel: 'Create Draft',
-    };
-    addNotification(notification);
+    });
 
     navigate('/collaboration');
   };
@@ -141,13 +139,8 @@ export const OTRequestPage: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, requestType: e.target.value as OTRequest['requestType'] })
               }
-            >
-              {requestTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </Select>
+              options={requestTypes}
+            />
           </div>
 
           {/* Machine Details */}
@@ -174,14 +167,8 @@ export const OTRequestPage: React.FC = () => {
                   setFormData({ ...formData, machineType: e.target.value as MachineType })
                 }
                 error={errors.machineType}
-              >
-                <option value="">Select type...</option>
-                {machineTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </Select>
+                options={[{ value: '', label: 'Select type...' }, ...machineTypes]}
+              />
             </div>
 
             <div>
@@ -206,14 +193,8 @@ export const OTRequestPage: React.FC = () => {
                   setFormData({ ...formData, protocol: e.target.value as ProtocolType })
                 }
                 error={errors.protocol}
-              >
-                <option value="">Select protocol...</option>
-                {protocols.map((proto) => (
-                  <option key={proto.value} value={proto.value}>
-                    {proto.label}
-                  </option>
-                ))}
-              </Select>
+                options={[{ value: '', label: 'Select protocol...' }, ...protocols]}
+              />
             </div>
           </div>
 

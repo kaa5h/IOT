@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   Factory,
   MessageSquare,
+  Users,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -21,6 +22,7 @@ const navItems = [
   { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { path: '/machines', icon: Server, label: 'Machines' },
   { path: '/requests', icon: MessageSquare, label: 'Requests' },
+  { path: '/collaboration', icon: Users, label: 'Collaboration' },
   { path: '/templates', icon: FileText, label: 'Templates' },
   { path: '/deployments', icon: Rocket, label: 'Deployments' },
   { path: '/settings', icon: Settings, label: 'Settings' },
