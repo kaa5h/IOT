@@ -130,6 +130,61 @@ export interface DeviceNode {
   selected?: boolean;
 }
 
+// IT/OT Collaboration Types
+export type UserRole = 'IT' | 'OT';
+export type RequestStatus =
+  | 'pending_ot'        // IT created, waiting for OT to fill
+  | 'filled_by_ot'      // OT filled, sent back to IT
+  | 'generating_scf'    // LLM is generating SCF
+  | 'pending_review'    // SCF generated, waiting for IT review (Route B)
+  | 'approved'          // IT approved the SCF
+  | 'rejected'          // IT rejected the SCF
+  | 'deployed';         // Successfully deployed
+
+export interface DataPointRequest {
+  id: string;
+  machineId?: string;
+  machineName: string;
+  machineType: MachineType;
+  location: string;
+  protocol: ProtocolType;
+  description?: string;
+
+  // Request metadata
+  requestedBy: string;      // IT user who created request
+  requestedAt: string;
+
+  // Data points
+  dataPoints: DataPoint[];
+  filledBy?: string;        // OT user who filled
+  filledAt?: string;
+
+  // Workflow
+  status: RequestStatus;
+  route: 'it_review' | 'direct_deploy';  // Which route OT chose
+
+  // SCF (Service Commissioning File)
+  scf?: ServiceCommissioningFile;
+
+  // Review (for Route B)
+  reviewedBy?: string;      // IT user who reviewed
+  reviewedAt?: string;
+  reviewComments?: string;
+}
+
+export interface ServiceCommissioningFile {
+  id: string;
+  yaml: string;
+  generatedAt: string;
+  generatedBy: 'IT' | 'OT';
+  protocol: ProtocolType;
+  machineInfo: {
+    name: string;
+    type: MachineType;
+    location: string;
+  };
+}
+
 export interface AppState {
   machines: Machine[];
   templates: Template[];
@@ -139,4 +194,8 @@ export interface AppState {
   aiChatHistory: AIMessage[];
   isAiPanelOpen: boolean;
   currentDeployment: Deployment | null;
+
+  // IT/OT Collaboration
+  currentUserRole: UserRole;
+  dataPointRequests: DataPointRequest[];
 }
