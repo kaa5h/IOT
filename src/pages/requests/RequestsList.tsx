@@ -36,12 +36,21 @@ export const RequestsList: React.FC = () => {
   const getActionButton = (request: any) => {
     if (currentUserRole === 'OT' && request.status === 'pending_ot') {
       return (
-        <Button
-          size="sm"
-          onClick={() => navigate(`/requests/${request.id}/fill`)}
-        >
-          Fill Data Points
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/requests/${request.id}/fill`)}
+          >
+            Form View
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => navigate(`/requests/${request.id}/configure`)}
+          >
+            Excel View
+          </Button>
+        </div>
       );
     }
 

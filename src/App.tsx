@@ -11,6 +11,7 @@ import { AddMachineWizard } from './pages/wizard/AddMachineWizard';
 import { RequestsList } from './pages/requests/RequestsList';
 import { CreateRequest } from './pages/requests/CreateRequest';
 import { FillDataPoints } from './pages/requests/FillDataPoints';
+import { OTConfiguration } from './pages/requests/OTConfiguration';
 import { ReviewSCF } from './pages/requests/ReviewSCF';
 import { GenerateSCF } from './pages/requests/GenerateSCF';
 import { ToastContainer } from './components/ui/Toast';
@@ -32,6 +33,7 @@ function App() {
           <Route path="requests" element={<RequestsList />} />
           <Route path="requests/create" element={<CreateRequest />} />
           <Route path="requests/:id/fill" element={<FillDataPoints />} />
+          <Route path="requests/:id/configure" element={<OTConfiguration />} />
           <Route path="requests/:id/review" element={<ReviewSCF />} />
           <Route path="requests/:id/generate" element={<GenerateSCF />} />
           <Route path="settings" element={<Settings />} />
