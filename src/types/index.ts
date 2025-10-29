@@ -130,16 +130,140 @@ export interface DeviceNode {
   selected?: boolean;
 }
 
-// IT/OT Collaboration Types
+// IT/OT Collaboration Types - New Workflow
 export type UserRole = 'IT' | 'OT';
+
+// New workflow status flow
+export type CollaborationStatus =
+  | 'ot_data_provided'     // OT has sent operational data to IT
+  | 'it_draft_created'     // IT has created initial SCF draft
+  | 'llm_enhancing'        // LLM is enhancing the SCF
+  | 'llm_enhanced'         // LLM has returned enhanced SCF to IT
+  | 'it_refining'          // IT is manually refining the SCF
+  | 'ready_to_deploy'      // SCF is finalized and ready
+  | 'deploying'            // Deployment in progress
+  | 'deployed'             // Successfully deployed
+  | 'failed';              // Deployment or process failed
+
+// Data sources that LLM can query
+export type DataSourceType = 'opcua_browse' | 'scf_library' | 'manifest' | 'uns' | 'documentation';
+
+export interface DataSource {
+  type: DataSourceType;
+  name: string;
+  description: string;
+  queried: boolean;
+  queryTime?: string;
+  results?: any;
+}
+
+// OT Request - OT provides operational data to IT
+export interface OTRequest {
+  id: string;
+  requestType: 'new_machine' | 'update_config' | 'troubleshoot' | 'integration';
+  machineName: string;
+  machineType: MachineType;
+  location: string;
+  protocol: ProtocolType;
+
+  // Operational data from OT
+  operationalData: {
+    description: string;
+    currentIssue?: string;
+    requirements: string;
+    dataPoints?: DataPoint[];
+    configNotes?: string;
+  };
+
+  // Metadata
+  requestedBy: string;      // OT user
+  requestedAt: string;
+
+  // Workflow state
+  status: CollaborationStatus;
+
+  // IT Draft
+  itDraft?: SCFDraft;
+
+  // LLM Enhancement
+  llmEnhancement?: LLMEnhancement;
+
+  // Manual refinement
+  refinedSCF?: string;       // YAML content after IT manual edit
+  refinedBy?: string;
+  refinedAt?: string;
+
+  // Deployment
+  deploymentMethod?: 'upload' | 'gitops';
+  deploymentConfig?: DeploymentConfig;
+  deployedAt?: string;
+  deployedBy?: string;
+}
+
+// IT creates initial draft
+export interface SCFDraft {
+  id: string;
+  yaml: string;              // Initial YAML draft
+  createdBy: string;         // IT user
+  createdAt: string;
+  notes?: string;
+}
+
+// LLM Enhancement process
+export interface LLMEnhancement {
+  id: string;
+  chatHistory: LLMMessage[];
+  dataSources: DataSource[];
+  testResults?: TestResult[];
+  enhancedYAML: string;
+  enhancedAt: string;
+  improvements: string[];    // List of improvements made
+}
+
+export interface LLMMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: string;
+  dataSourcesUsed?: DataSourceType[];
+}
+
+export interface TestResult {
+  id: string;
+  testType: 'syntax' | 'connectivity' | 'data_validation' | 'integration';
+  status: 'passed' | 'failed' | 'warning';
+  message: string;
+  timestamp: string;
+  details?: any;
+}
+
+// Deployment configuration
+export interface DeploymentConfig {
+  method: 'upload' | 'gitops';
+
+  // For upload method
+  uploadTarget?: 'admin_ui' | 'api';
+  apiEndpoint?: string;
+
+  // For GitOps method
+  gitRepo?: string;
+  gitBranch?: string;
+  cicdPipeline?: 'ansible' | 'k8s_operator' | 'both';
+
+  // Common
+  environment?: 'dev' | 'staging' | 'prod';
+  deploymentNotes?: string;
+}
+
+// Legacy types for backward compatibility (to be migrated)
 export type RequestStatus =
-  | 'pending_ot'        // IT created, waiting for OT to fill
-  | 'filled_by_ot'      // OT filled, sent back to IT
-  | 'generating_scf'    // LLM is generating SCF
-  | 'pending_review'    // SCF generated, waiting for IT review (Route B)
-  | 'approved'          // IT approved the SCF
-  | 'rejected'          // IT rejected the SCF
-  | 'deployed';         // Successfully deployed
+  | 'pending_ot'
+  | 'filled_by_ot'
+  | 'generating_scf'
+  | 'pending_review'
+  | 'approved'
+  | 'rejected'
+  | 'deployed';
 
 export interface DataPointRequest {
   id: string;
