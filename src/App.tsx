@@ -14,6 +14,12 @@ import { FillDataPoints } from './pages/requests/FillDataPoints';
 import { OTConfiguration } from './pages/requests/OTConfiguration';
 import { ReviewSCF } from './pages/requests/ReviewSCF';
 import { GenerateSCF } from './pages/requests/GenerateSCF';
+import { CollaborationList } from './pages/collaboration/CollaborationList';
+import { OTRequestPage } from './pages/collaboration/OTRequestPage';
+import { ITDraftPage } from './pages/collaboration/ITDraftPage';
+import { LLMEnhancementPage } from './pages/collaboration/LLMEnhancementPage';
+import { RefinePage } from './pages/collaboration/RefinePage';
+import { DeployPage } from './pages/collaboration/DeployPage';
 import { ToastContainer } from './components/ui/Toast';
 import { useToast } from './hooks/useToast';
 
@@ -36,6 +42,12 @@ function App() {
           <Route path="requests/:id/configure" element={<OTConfiguration />} />
           <Route path="requests/:id/review" element={<ReviewSCF />} />
           <Route path="requests/:id/generate" element={<GenerateSCF />} />
+          <Route path="collaboration" element={<CollaborationList />} />
+          <Route path="collaboration/ot-request" element={<OTRequestPage />} />
+          <Route path="collaboration/:id/it-draft" element={<ITDraftPage />} />
+          <Route path="collaboration/:id/llm-enhance" element={<LLMEnhancementPage />} />
+          <Route path="collaboration/:id/refine" element={<RefinePage />} />
+          <Route path="collaboration/:id/deploy" element={<DeployPage />} />
           <Route path="settings" element={<Settings />} />
           <Route path="wizard" element={<AddMachineWizard />} />
         </Route>

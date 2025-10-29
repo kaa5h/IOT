@@ -9,6 +9,7 @@ import type {
   DataPointRequest,
   UserRole,
   Notification,
+  OTRequest,
 } from '../types';
 import { mockMachines, mockTemplates } from '../data/mockData';
 
@@ -30,6 +31,9 @@ interface StoreState {
   // IT/OT Collaboration
   currentUserRole: UserRole;
   dataPointRequests: DataPointRequest[];
+
+  // New Workflow - IT/OT Collaboration
+  otRequests: OTRequest[];
 
   // Notifications
   notifications: Notification[];
@@ -66,6 +70,11 @@ interface StoreState {
   deleteNotification: (id: string) => void;
   clearAllNotifications: () => void;
   toggleNotificationPanel: () => void;
+
+  // New Workflow Actions
+  createOTRequest: (request: OTRequest) => void;
+  updateOTRequest: (id: string, updates: Partial<OTRequest>) => void;
+  deleteOTRequest: (id: string) => void;
 }
 
 const initialWizardData: WizardFormData = {
@@ -97,6 +106,9 @@ export const useStore = create<StoreState>((set) => ({
   // Initial IT/OT Collaboration state
   currentUserRole: 'IT', // Default to IT role
   dataPointRequests: [],
+
+  // New Workflow - Initial state
+  otRequests: [],
 
   // Initial Notification state
   notifications: [],
@@ -229,5 +241,23 @@ export const useStore = create<StoreState>((set) => ({
   toggleNotificationPanel: () =>
     set((state) => ({
       isNotificationPanelOpen: !state.isNotificationPanelOpen,
+    })),
+
+  // New Workflow actions
+  createOTRequest: (request) =>
+    set((state) => ({
+      otRequests: [...state.otRequests, request],
+    })),
+
+  updateOTRequest: (id, updates) =>
+    set((state) => ({
+      otRequests: state.otRequests.map((r) =>
+        r.id === id ? { ...r, ...updates } : r
+      ),
+    })),
+
+  deleteOTRequest: (id) =>
+    set((state) => ({
+      otRequests: state.otRequests.filter((r) => r.id !== id),
     })),
 }));
