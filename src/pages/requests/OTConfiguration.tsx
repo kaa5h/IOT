@@ -9,12 +9,13 @@ import { getColumnsForProtocol, createEmptyRow, type OTConfig } from '../../lib/
 import { ArrowLeft, Send, Sparkles } from 'lucide-react';
 import { generateId } from '../../lib/utils';
 import { generateSCFWithLLM } from '../../lib/llmService';
+import { NotificationTemplates } from '../../lib/notificationHelpers';
 import type { DataPoint } from '../../types';
 
 export const OTConfiguration: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { dataPointRequests, updateRequest } = useStore();
+  const { dataPointRequests, updateRequest, addNotification } = useStore();
 
   const request = dataPointRequests.find((r) => r.id === id);
   const [configRows, setConfigRows] = useState<OTConfig[]>(() => {
@@ -68,6 +69,15 @@ export const OTConfiguration: React.FC = () => {
         filledBy: 'OT User',
         filledAt: new Date().toISOString(),
       });
+
+      // Notify IT that data points have been filled
+      const notification = NotificationTemplates.requestFilled(
+        request.id,
+        request.machineName,
+        'it_review'
+      );
+      addNotification(notification);
+
       setIsSending(false);
       navigate('/requests');
     }, 500);
@@ -108,6 +118,13 @@ export const OTConfiguration: React.FC = () => {
         scf,
         status: 'pending_review',
       });
+
+      // Notify IT that SCF is ready for review
+      const notification = NotificationTemplates.reviewPending(
+        request.id,
+        request.machineName
+      );
+      addNotification(notification);
 
       setIsGenerating(false);
       navigate('/requests');

@@ -8,6 +8,7 @@ import type {
   AIMessage,
   DataPointRequest,
   UserRole,
+  Notification,
 } from '../types';
 import { mockMachines, mockTemplates } from '../data/mockData';
 
@@ -29,6 +30,10 @@ interface StoreState {
   // IT/OT Collaboration
   currentUserRole: UserRole;
   dataPointRequests: DataPointRequest[];
+
+  // Notifications
+  notifications: Notification[];
+  isNotificationPanelOpen: boolean;
 
   // Actions
   addMachine: (machine: Machine) => void;
@@ -53,6 +58,14 @@ interface StoreState {
   createRequest: (request: DataPointRequest) => void;
   updateRequest: (id: string, updates: Partial<DataPointRequest>) => void;
   deleteRequest: (id: string) => void;
+
+  // Notification Actions
+  addNotification: (notification: Notification) => void;
+  markNotificationAsRead: (id: string) => void;
+  markAllAsRead: () => void;
+  deleteNotification: (id: string) => void;
+  clearAllNotifications: () => void;
+  toggleNotificationPanel: () => void;
 }
 
 const initialWizardData: WizardFormData = {
@@ -84,6 +97,10 @@ export const useStore = create<StoreState>((set) => ({
   // Initial IT/OT Collaboration state
   currentUserRole: 'IT', // Default to IT role
   dataPointRequests: [],
+
+  // Initial Notification state
+  notifications: [],
+  isNotificationPanelOpen: false,
 
   // Machine actions
   addMachine: (machine) =>
@@ -179,5 +196,38 @@ export const useStore = create<StoreState>((set) => ({
   deleteRequest: (id) =>
     set((state) => ({
       dataPointRequests: state.dataPointRequests.filter((r) => r.id !== id),
+    })),
+
+  // Notification actions
+  addNotification: (notification) =>
+    set((state) => ({
+      notifications: [notification, ...state.notifications], // New notifications at top
+    })),
+
+  markNotificationAsRead: (id) =>
+    set((state) => ({
+      notifications: state.notifications.map((n) =>
+        n.id === id ? { ...n, read: true } : n
+      ),
+    })),
+
+  markAllAsRead: () =>
+    set((state) => ({
+      notifications: state.notifications.map((n) => ({ ...n, read: true })),
+    })),
+
+  deleteNotification: (id) =>
+    set((state) => ({
+      notifications: state.notifications.filter((n) => n.id !== id),
+    })),
+
+  clearAllNotifications: () =>
+    set(() => ({
+      notifications: [],
+    })),
+
+  toggleNotificationPanel: () =>
+    set((state) => ({
+      isNotificationPanelOpen: !state.isNotificationPanelOpen,
     })),
 }));
