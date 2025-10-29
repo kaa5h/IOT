@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Search, Bell, Bot, User, Users } from 'lucide-react';
 import { useStore } from '../../store/useStore';
+import { NotificationPanel } from '../NotificationPanel';
 import { cn } from '../../lib/utils';
 
 export const Topbar: React.FC = () => {
-  const { isAiPanelOpen, toggleAIPanel, currentUserRole, setUserRole } = useStore();
+  const {
+    isAiPanelOpen,
+    toggleAIPanel,
+    currentUserRole,
+    setUserRole,
+    notifications,
+    isNotificationPanelOpen,
+    toggleNotificationPanel,
+  } = useStore();
+
+  // Calculate unread count for current role
+  const unreadCount = useMemo(() => {
+    return notifications.filter(
+      (n) => !n.read && n.visibleTo.includes(currentUserRole)
+    ).length;
+  }, [notifications, currentUserRole]);
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
@@ -66,13 +82,28 @@ export const Topbar: React.FC = () => {
         </div>
 
         {/* Notifications */}
-        <button
-          className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          title="Notifications"
-        >
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1 right-1 h-2 w-2 bg-error rounded-full" />
-        </button>
+        <div className="relative">
+          <button
+            onClick={toggleNotificationPanel}
+            className={cn(
+              'relative p-2 rounded-lg transition-colors',
+              isNotificationPanelOpen
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-600 hover:bg-gray-100'
+            )}
+            title="Notifications"
+          >
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <span className="absolute top-0.5 right-0.5 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Notification Panel */}
+          {isNotificationPanelOpen && <NotificationPanel />}
+        </div>
 
         {/* User Profile */}
         <button

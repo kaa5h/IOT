@@ -185,6 +185,48 @@ export interface ServiceCommissioningFile {
   };
 }
 
+// Notification System
+export type NotificationType =
+  | 'request_created'       // IT created new request
+  | 'request_filled'        // OT filled data points
+  | 'scf_generated'         // SCF generated (by IT or OT)
+  | 'review_pending'        // SCF awaiting peer review
+  | 'scf_approved'          // IT approved SCF
+  | 'scf_rejected'          // IT rejected SCF
+  | 'deployment_success'    // Machine deployed successfully
+  | 'deployment_failed'     // Deployment failed
+  | 'machine_connected'     // Machine connected
+  | 'machine_disconnected'  // Machine disconnected
+  | 'machine_error'         // Machine error
+  | 'validation_warning'    // Configuration validation warning
+  | 'system_alert'          // System maintenance/updates
+  | 'git_sync_issue';       // Git synchronization issue
+
+export type NotificationPriority = 'low' | 'medium' | 'high' | 'urgent';
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+
+  // Related entities
+  machineId?: string;
+  machineName?: string;
+  requestId?: string;
+  deploymentId?: string;
+
+  // Role-based visibility
+  visibleTo: UserRole[];
+
+  // Action
+  actionUrl?: string;      // URL to navigate when clicked
+  actionLabel?: string;    // Button label like "Review Now", "View Details"
+}
+
 export interface AppState {
   machines: Machine[];
   templates: Template[];

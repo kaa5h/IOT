@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { Input, Textarea, Select } from '../../components/ui/Input';
 import type { MachineType, ProtocolType, DataPointRequest } from '../../types';
 import { generateId } from '../../lib/utils';
+import { NotificationTemplates } from '../../lib/notificationHelpers';
 import { ChevronLeft, Send } from 'lucide-react';
 
 const machineTypes: Array<{ value: MachineType; label: string }> = [
@@ -27,7 +28,7 @@ const protocols: Array<{ value: ProtocolType; label: string }> = [
 
 export const CreateRequest: React.FC = () => {
   const navigate = useNavigate();
-  const { createRequest } = useStore();
+  const { createRequest, addNotification } = useStore();
 
   const [formData, setFormData] = useState({
     machineName: '',
@@ -69,6 +70,14 @@ export const CreateRequest: React.FC = () => {
     };
 
     createRequest(request);
+
+    // Create notification for OT users
+    const notification = NotificationTemplates.requestCreated(
+      request.id,
+      request.machineName
+    );
+    addNotification(notification);
+
     navigate('/requests');
   };
 
